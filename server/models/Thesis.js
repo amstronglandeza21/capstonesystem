@@ -1,3 +1,4 @@
+// server/models/Thesis.js
 const mongoose = require('mongoose');
 
 const ThesisSchema = new mongoose.Schema({
@@ -7,7 +8,6 @@ const ThesisSchema = new mongoose.Schema({
   email: String,
   filePath: String,
   thumbnailPath: String,
-  uploadedAt: { type: Date, default: Date.now },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Thesis', ThesisSchema);

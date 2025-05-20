@@ -43,12 +43,13 @@
 }
 
 .thesis-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0 0 6px 0;
-  word-break: break-word;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
   white-space: normal;
 }
+
 
 .thesis-info p {
   margin: 4px 0;
@@ -72,3 +73,10 @@
 .view-button:hover {
   background-color: #2980b9;
 }
+
+.total-count {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #555;
+}
+

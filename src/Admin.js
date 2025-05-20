@@ -1,5 +1,7 @@
+// src/Admin.js
 import React, { useEffect, useState } from 'react';
-import './Admin.css'; // your custom styles
+import DashboardLayout from './components/DashboardLayout';
+import './Admin.css';
 
 const Admin = () => {
   const [theses, setTheses] = useState([]);
@@ -7,49 +9,58 @@ const Admin = () => {
   useEffect(() => {
     fetch('/api/theses')
       .then(res => res.json())
-      .then(data => setTheses(data))
-      .catch(err => console.error('Fetch error:', err));
+      .then(data => {
+        console.log('✅ Fetched theses:', data); // Debug thumbnailPath
+        setTheses(data);
+      })
+      .catch(err => console.error('❌ Fetch error:', err));
   }, []);
 
   return (
-    <div className="admin-container">
-      <h2>Capstone</h2>
-      <div className="thesis-grid">
-        {theses.map((thesis) => (
-          <div className="thesis-card" key={thesis._id}>
-            <div className="thumbnail">
-              {thesis.thumbnailPath ? (
-               <img
-                src={`http://localhost:5000/thumbnails/${thesis.thumbnailPath.split('/').pop()}`}
-                alt={`${thesis.title} front page thumbnail`}
-                className="thumbnail-img"
-              />
+    <DashboardLayout>
+      <div className="admin-container">
+        <h2>Uploaded Theses</h2>
+        <p className="total-count">Total: {theses.length}</p>
 
-              ) : (
-                <img
-                  src="/book-cover.png" // default placeholder image
-                  alt="Default thumbnail"
-                  className="thumbnail-img"
-                />
-              )}
-            </div>
-            <div className="thesis-info">
-             <h1 className="thesis-title">{thesis.title}</h1>
+        <div className="thesis-grid">
+          {theses.map((thesis) => {
+            const thumbnailUrl = thesis.thumbnailPath
+              ? `http://localhost:5000/${thesis.thumbnailPath}`
+              : '/book-cover.png';
 
-              <p><strong>Author:</strong> {thesis.author}</p>
-              <p><strong>Email:</strong> {thesis.email}</p>
-              <button
-                className="view-button"
-                onClick={() => window.open(`http://localhost:5000/${thesis.filePath}`, '_blank')}
-                style={{ textDecoration: 'none' }} // disables underline on button text
-              >
-                View PDF
-              </button>
-            </div>
-          </div>
-        ))}
+            return (
+              <div className="thesis-card" key={thesis._id}>
+                <div className="thumbnail">
+                  <img
+                    src={thumbnailUrl}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/book-cover.png';
+                    }}
+                    alt={`${thesis.title} thumbnail`}
+                    className="thumbnail-img"
+                    style={{ objectFit: 'cover', width: '100%', height: '200px' }}
+                  />
+                </div>
+                <div className="thesis-info">
+                  <h1 className="thesis-title">{thesis.title}</h1>
+                  <p><strong>Author:</strong> {thesis.author}</p>
+                  <p><strong>Email:</strong> {thesis.email}</p>
+                  <button
+                    className="view-button"
+                    onClick={() =>
+                      window.open(`http://localhost:5000/${thesis.filePath}`, '_blank')
+                    }
+                  >
+                    View PDF
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

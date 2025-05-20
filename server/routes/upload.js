@@ -1,48 +1,50 @@
+// server/routes/upload.js
 const express = require('express');
 const multer = require('multer');
+const Thesis = require('../models/Thesis');
+const { convert } = require('pdf-poppler');
 const path = require('path');
 const fs = require('fs');
-const { fromPath } = require('pdf2pic');
-const Thesis = require('../models/Thesis');
-
 const router = express.Router();
 
+// Multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname),
 });
-
 const upload = multer({ storage });
 
+// POST /api/upload
 router.post('/', upload.single('file'), async (req, res) => {
   try {
     const { title, abstract, author, email } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
     const pdfPath = req.file.path;
     const fileNameNoExt = path.parse(req.file.filename).name;
-    const thumbnailDir = 'uploads/thumbnails';
-    const thumbnailPath = `${thumbnailDir}/${fileNameNoExt}.png`;
+    const thumbnailDir = path.join(__dirname, '../uploads/thumbnails');
+    const thumbnailOutputPath = path.join(thumbnailDir, `${fileNameNoExt}.png`);
+    const webThumbnailPath = `uploads/thumbnails/${fileNameNoExt}.png`.replace(/\\/g, '/');
 
-    // Ensure thumbnails directory exists
+    // Ensure thumbnail directory exists
     if (!fs.existsSync(thumbnailDir)) {
       fs.mkdirSync(thumbnailDir, { recursive: true });
     }
 
-    // Convert first page to image using pdf2pic
-    const convert = fromPath(pdfPath, {
-      density: 100,
-      saveFilename: fileNameNoExt,
-      savePath: thumbnailDir,
+    // Convert first page of PDF to PNG
+    await convert(pdfPath, {
       format: 'png',
-      width: 600,
-      height: 800,
+      out_dir: thumbnailDir,
+      out_prefix: fileNameNoExt,
+      page: 1,
     });
 
-    await convert(1); // Convert page 1
-
-    // Check for duplicate
     const existing = await Thesis.findOne({ title, author });
     if (existing) {
-      return res.status(400).json({ error: 'Duplicate title for the same author is not allowed.' });
+      return res.status(400).json({ error: 'Duplicate thesis for same author.' });
     }
 
     const thesis = new Thesis({
@@ -50,11 +52,12 @@ router.post('/', upload.single('file'), async (req, res) => {
       abstract,
       author,
       email,
-      filePath: req.file.path,
-      thumbnailPath: thumbnailPath.replace(/\\/g, '/'), // normalize path for cross-platform
+      filePath: req.file.path.replace(/\\/g, '/'),
+      thumbnailPath: webThumbnailPath,
     });
 
     await thesis.save();
+
     res.status(200).json({ message: 'Uploaded successfully' });
 
   } catch (error) {
