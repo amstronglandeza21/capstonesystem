@@ -1,82 +1,137 @@
+/* Admin.css */
 .admin-container {
-  padding: 20px;
+  background-color:rgb(255, 255, 255); /* Or match your sidebar/dashboard background */
+  min-height: 100vh;
+  padding: 1rem;
+}
+
+
+.total-count {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
 }
 
 .thesis-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
 }
 
 .thesis-card {
-  background: #fff;
+  background-color:rgb(255, 255, 255);
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 15px;
-  text-align: center;
-  transition: transform 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.31);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease-in-out, transform 0.2s ease;
+  position: relative;
+  cursor: default;
 }
 
 .thesis-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+}
+
+.thumbnail {
+  height: 300px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:rgba(248, 248, 248, 0.62);
 }
 
 .thumbnail-img {
-  width: 100%;
-  height: 180px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 10px;
 }
 
 .thesis-info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
+  padding: 15px;
 }
 
 .thesis-title {
-  font-size: 1.1rem;
-  margin-bottom: 0.5rem;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-}
-
-
-.thesis-info p {
-  margin: 4px 0;
-  word-break: break-word;
-  white-space: normal;
+  font-size: 18px;
+  margin: 0 0 8px;
 }
 
 .view-button {
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  padding: 8px 16px;
-  background-color: #3498db;
+  background-color:rgb(97, 102, 105);
   color: white;
-  border-radius: 4px;
-  font-weight: bold;
+  padding: 6px 12px;
   margin-top: 10px;
-  align-self: flex-end;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .view-button:hover {
-  background-color: #2980b9;
+  background-color:rgb(66, 66, 66);
 }
 
-.total-count {
+/* === Delete Mode Controls === */
+.admin-header {
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.delete-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  color:rgb(0, 0, 0);
   font-size: 18px;
-  margin-bottom: 15px;
-  color: #555;
 }
 
+.delete-icon-button:hover {
+  color:rgb(0, 0, 0);
+}
+
+.cancel-button,
+.apply-delete-button {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cancel-button {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.apply-delete-button {
+  background-color:rgb(46, 48, 51);
+  color: #fff;
+}
+
+/* === Delete Selection Mode === */
+.thesis-card.select-mode {
+  cursor: pointer;
+}
+
+.thesis-card.selected {
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.4);
+  background-color:rgb(255, 255, 255);
+}
+
+.selection-checkbox {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  transform: scale(1.2);
+  z-index: 5;
+}
+input[type="checkbox"] {
+  accent-color:rgb(0, 0, 0); /* changes the checkmark and box color */
+}

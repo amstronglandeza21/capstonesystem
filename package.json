@@ -58,5 +58,8 @@
   "bugs": {
     "url": "https://github.com/amstronglandeza21/capstonesystem/issues"
   },
-  "homepage": "."
+  "homepage": ".",
+  "devDependencies": {
+    "webpack-dev-server": "^5.2.1"
+  }
 }

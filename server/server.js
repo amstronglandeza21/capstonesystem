@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use('/uploads/thumbnails', express.static(path.join(__dirname, 'uploads/thumbnails')));
+app.use('/uploads/thumbnails', express.static(path.join(__dirname, '/uploads/thumbnails')));
 
 // Routes
 app.use('/api/upload', uploadRoute);

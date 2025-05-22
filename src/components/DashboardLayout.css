@@ -1,23 +1,34 @@
+/* DashboardLayout.css */
+
 .dashboard-container {
   display: flex;
   height: 100vh;
 }
 
 .sidebar {
-  background-color: #1e293b;
-  color: white;
-  width: 220px;
-  transition: width 0.3s;
-  padding: 1rem;
+  background-color: rgb(255, 255, 255);
+  color: #111; /* use dark text if your sidebar background is white */
+  width: 190px; /* match your sidebar desired open width */
+  transition: width 0.3s ease;
+  padding: 1rem 0;
+  overflow: hidden;
 }
 
 .sidebar.collapsed {
-  width: 60px;
+  width: 60px; /* collapsed width */
 }
+
+.main-content {
+  flex: 1;
+  padding: 1px;
+  background-color: rgb(255, 255, 255); /* something different than sidebar */
+  overflow-y: auto;
+}
+
 
 .sidebar-header {
   display: flex;
-  align-items: center;
+  align-items: left;
   justify-content: space-between;
 }
 
@@ -49,12 +60,5 @@
 }
 
 .nav-link:hover {
-  color: #60a5fa;
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px;
-  background-color: #f9fafb;
-  overflow-y: auto;
+  color:rgba(198, 203, 209, 0.51);
 }
