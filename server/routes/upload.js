@@ -5,6 +5,8 @@ const { convert } = require('pdf-poppler');
 const path = require('path');
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
+const Poppler = require('pdf-poppler');
+
 
 const router = express.Router();
 
