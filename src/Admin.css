@@ -135,3 +135,81 @@
 input[type="checkbox"] {
   accent-color:rgb(0, 0, 0); /* changes the checkmark and box color */
 }
+
+/* Toggle Button for MRAD */
+.toggle-mrad-btn {
+ background-color:rgb(97, 102, 105);
+  color: white;
+  padding: 6px 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.toggle-mrad-btn:hover {
+  background-color: #f3f4f6;
+  border-color: #cbd5e1;
+  color: #1f2937;
+}
+
+
+/* MRAD Content Container */
+.mrad-content {
+  margin-top: 1rem;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Each MRAD Section (Methodology, Results, etc.) */
+.mrad-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  color: #374151;
+}
+
+.mrad-content p {
+  margin: 0.3rem 0 1rem;
+  color: #4b5563;
+}
+
+/* MRAD Button */
+.view-mrad-button {
+  margin-top: 0.5rem;
+  margin-left: 0.5rem;
+  background-color: #f0f4f8;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.view-mrad-button:hover {
+  background-color: #e0e7ef;
+  transform: scale(1.02);
+}
+
+/* MRAD Content */
+.mrad-section {
+  margin-top: 0.75rem;
+  background-color: #f9f9f9;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.mrad-section p {
+  margin-bottom: 0.4rem;
+}
+
+

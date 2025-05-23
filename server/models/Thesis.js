@@ -6,6 +6,11 @@ const ThesisSchema = new mongoose.Schema({
   abstract: String,
   author: String,
   email: String,
+  textContent: String,
+  methodology: String,
+  results: String,
+  analysis: String,
+  discussion: String,
   filePath: String,
   thumbnailPath: String,
 }, { timestamps: true });

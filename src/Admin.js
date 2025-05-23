@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
 import { Trash2 } from 'lucide-react';
-import SearchBar from './components/SearchBar'; // or './SearchBar' depending on your file structure
+import SearchBar from './components/SearchBar';
 import './Admin.css';
 
 const Admin = () => {
@@ -10,6 +10,7 @@ const Admin = () => {
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [expandedMRAD, setExpandedMRAD] = useState(null);
 
   useEffect(() => {
     fetch('/api/theses')
@@ -18,52 +19,50 @@ const Admin = () => {
       .catch(err => console.error('Fetch error:', err));
   }, []);
 
-  // ... your existing functions (toggleSelectMode, toggleSelection, applyDelete)...
+  const toggleSelection = (id) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(_id => _id !== id) : [...prev, id]
+    );
+  };
+
+  const applyDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete selected theses?')) return;
+
+    try {
+      const res = await fetch('/api/theses/delete', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedIds }),
+      });
+
+      if (res.ok) {
+        setTheses(prev => prev.filter(thesis => !selectedIds.includes(thesis._id)));
+        setSelectedIds([]);
+        setSelectMode(false);
+      } else {
+        console.error('Failed to delete');
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+    }
+  };
+
+  const toggleMRAD = (id) => {
+    setExpandedMRAD(expandedMRAD === id ? null : id);
+  };
 
   const filteredTheses = theses.filter(t =>
     t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.author.toLowerCase().includes(searchTerm.toLowerCase())
+    t.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    t.textContent?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  const toggleSelection = (id) => {
-  setSelectedIds(prev =>
-    prev.includes(id) ? prev.filter(_id => _id !== id) : [...prev, id]
-  );
-};
-
-const applyDelete = async () => {
-  if (!window.confirm('Are you sure you want to delete selected theses?')) return;
-
-  try {
-    const res = await fetch('/api/theses/delete', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ids: selectedIds }),
-    });
-
-    if (res.ok) {
-      setTheses(prev => prev.filter(thesis => !selectedIds.includes(thesis._id)));
-      setSelectedIds([]);
-      setSelectMode(false);
-    } else {
-      console.error('Failed to delete');
-    }
-  } catch (err) {
-    console.error('Delete error:', err);
-  }
-};
-
 
   return (
     <DashboardLayout>
-    
       <div className="admin-container" style={{ position: 'relative' }}>
+        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        
         <div className="admin-header" style={{ position: 'relative' }}>
-          
-       
-
           <h2>Uploaded Capstone</h2>
           <div className="admin-actions">
             {!selectMode ? (
@@ -136,6 +135,24 @@ const applyDelete = async () => {
                 >
                   View PDF
                 </button>
+                <button
+                  className="view-mrad-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleMRAD(thesis._id);
+                  }}
+                >
+                  {expandedMRAD === thesis._id ? 'Hide MRAD' : 'View MRAD'}
+                </button>
+
+                {expandedMRAD === thesis._id && (
+                  <div className="mrad-section">
+                    <p><strong>Methodology:</strong> {thesis.methodology || 'N/A'}</p>
+                    <p><strong>Results:</strong> {thesis.results || 'N/A'}</p>
+                    <p><strong>Analysis:</strong> {thesis.analysis || 'N/A'}</p>
+                    <p><strong>Discussion:</strong> {thesis.discussion || 'N/A'}</p>
+                  </div>
+                )}
               </div>
             </div>
           ))}

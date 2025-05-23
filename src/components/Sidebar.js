@@ -20,26 +20,29 @@ const Sidebar = () => {
 
   return (
     <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-      <button className="toggle-button" onClick={toggleSidebar}>
+      <button className="toggle-button" onClick={toggleSidebar} aria-label="Toggle sidebar">
         <Menu />
       </button>
 
       <nav>
-        <div className="nav-item">
+        <button className="nav-item" onClick={() => alert('Home clicked')}>
           <span className="nav-icon"><Home size={20} /></span>
           <span className="nav-label">Home</span>
-        </div>
-        <div className="nav-item">
+        </button>
+        <button className="nav-item" onClick={() => alert('Theses clicked')}>
           <span className="nav-icon"><Book size={20} /></span>
           <span className="nav-label">Theses</span>
-        </div>
+        </button>
       </nav>
 
       <div className="profile">
-        <img src="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg" alt="User" />
+        <img
+          src="https://www.shutterstock.com/image-vector/default-avatar-profile-icon-social-600nw-1677509740.jpg"
+          alt="User"
+        />
         <div className="info">
-          <strong>Luiese Amstrong</strong>
-          <small>luieseamstrong@gmail.com</small>
+          <p className="name">Luiese Amstrong</p>
+          <p className="email">luieseamstrong@gmail.com</p>
         </div>
       </div>
     </div>
