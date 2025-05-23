@@ -37,8 +37,8 @@ router.post('/', upload.single('file'), async (req, res) => {
     const pdfPath = req.file.path;
     const fileNameNoExt = path.parse(req.file.filename).name.toLowerCase().replace(/[^a-z]/g, '');
     const thumbnailDir = path.join(__dirname, '../uploads/thumbnails');
-    const generatedFile = path.join(thumbnailDir, `${fileNameNoExt}-01.png`);
-    const cleanFile = path.join(thumbnailDir, `${fileNameNoExt}.png`);
+    const generatedFileWithSuffix = path.join(thumbnailDir, `${fileNameNoExt}-01.png`);
+    const generatedFileNoSuffix = path.join(thumbnailDir, `${fileNameNoExt}.png`);
     const webThumbnailPath = `uploads/thumbnails/${fileNameNoExt}.png`.replace(/\\/g, '/');
 
     // Ensure thumbnail directory exists
@@ -54,11 +54,18 @@ router.post('/', upload.single('file'), async (req, res) => {
       page: 1,
     });
 
-    // Rename the file to remove the '-01' suffix
-    if (fs.existsSync(generatedFile)) {
-      fs.renameSync(generatedFile, cleanFile);
+    // DEBUG: List files in thumbnail folder
+    const files = fs.readdirSync(thumbnailDir);
+    console.log('Files in thumbnail dir:', files);
+
+    // Rename the thumbnail file to remove '-01' suffix if exists
+    if (fs.existsSync(generatedFileWithSuffix)) {
+      fs.renameSync(generatedFileWithSuffix, generatedFileNoSuffix);
+      console.log(`Renamed ${generatedFileWithSuffix} to ${generatedFileNoSuffix}`);
+    } else if (fs.existsSync(generatedFileNoSuffix)) {
+      console.log(`Thumbnail file already correctly named: ${generatedFileNoSuffix}`);
     } else {
-      console.warn(`Expected thumbnail ${generatedFile} not found.`);
+      console.warn(`No thumbnail file found for ${fileNameNoExt}`);
     }
 
     // Full-text extraction
