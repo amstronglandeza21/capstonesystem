@@ -1,23 +1,17 @@
-// src/Admin.js
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import DashboardLayout from './components/DashboardLayout';
-import { Trash2 } from 'lucide-react';
 import SearchBar from './components/SearchBar';
+import DeleteControls from './components/DeleteControls';
+import ThesisGrid from './components/ThesisGrid';
+import { useTheses } from './context/ThesisContext';
 import './Admin.css';
 
 const Admin = () => {
-  const [theses, setTheses] = useState([]);
+  const { theses, setTheses } = useTheses();
   const [selectMode, setSelectMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [expandedMRAD, setExpandedMRAD] = useState(null);
-
-  useEffect(() => {
-    fetch('/api/theses')
-      .then(res => res.json())
-      .then(data => setTheses(data))
-      .catch(err => console.error('Fetch error:', err));
-  }, []);
+  const [modalContent, setModalContent] = useState(null);
 
   const toggleSelection = (id) => {
     setSelectedIds(prev =>
@@ -47,116 +41,71 @@ const Admin = () => {
     }
   };
 
-  const toggleMRAD = (id) => {
-    setExpandedMRAD(expandedMRAD === id ? null : id);
+  const showMRAD = (thesis) => {
+    setModalContent(
+      <div className="modal-content">
+        <h2>IMRAD for {thesis.title}</h2>
+        <p><strong>Introduction:</strong> {thesis.introduction || 'N/A'}</p>
+        <p><strong>Methodology:</strong> {thesis.methodology || 'N/A'}</p>
+        <p><strong>Results:</strong> {thesis.results || 'N/A'}</p>
+        <p><strong>Analysis:</strong> {thesis.analysis || 'N/A'}</p>
+        <p><strong>Discussion:</strong> {thesis.discussion || 'N/A'}</p>
+      </div>
+    );
   };
 
-  const filteredTheses = theses.filter(t =>
-    t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    t.textContent?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const showFullText = (thesis) => {
+    setModalContent(
+      <div className="modal-content">
+        <h2>Full Text for {thesis.title}</h2>
+        <pre className="full-text">{thesis.textContent || 'N/A'}</pre>
+      </div>
+    );
+  };
+
+  const closeModal = () => setModalContent(null);
+
+const filteredTheses = theses.filter(t =>
+  (t.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (t.author || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  (t.textContent || '').toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   return (
     <DashboardLayout>
-      <div className="admin-container" style={{ position: 'relative' }}>
+      <div className="admin-container">
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
-        <div className="admin-header" style={{ position: 'relative' }}>
+        <div className="admin-header">
           <h2>Uploaded Capstone</h2>
-          <div className="admin-actions">
-            {!selectMode ? (
-              <button className="delete-icon-button" onClick={() => {
-                setSelectMode(true);
-                setSelectedIds([]);
-              }}>
-                <Trash2 size={20} />
-              </button>
-            ) : (
-              <>
-                <button className="cancel-button" onClick={() => {
-                  setSelectMode(false);
-                  setSelectedIds([]);
-                }}>
-                  Cancel
-                </button>
-                <button
-                  className="apply-delete-button"
-                  onClick={applyDelete}
-                  disabled={selectedIds.length === 0}
-                >
-                  Apply
-                </button>
-              </>
-            )}
-          </div>
+          <DeleteControls
+            selectMode={selectMode}
+            setSelectMode={setSelectMode}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            applyDelete={applyDelete}
+          />
         </div>
 
         <p className="total-count">Total: {filteredTheses.length}</p>
 
-        <div className="thesis-grid">
-          {filteredTheses.map(thesis => (
-            <div
-              className={`thesis-card ${selectMode ? 'select-mode' : ''} ${
-                selectedIds.includes(thesis._id) ? 'selected' : ''
-              }`}
-              key={thesis._id}
-              onClick={() => selectMode && toggleSelection(thesis._id)}
-            >
-              {selectMode && (
-                <input
-                  type="checkbox"
-                  checked={selectedIds.includes(thesis._id)}
-                  readOnly
-                  className="selection-checkbox"
-                />
-              )}
-              <div className="thumbnail">
-                <img
-                  src={`http://localhost:5000/${thesis.thumbnailPath}`}
-                  onError={e => {
-                    e.target.onerror = null;
-                    e.target.src = '/book-cover.png';
-                  }}
-                  alt={`${thesis.title} thumbnail`}
-                  className="thumbnail-img"
-                />
-              </div>
-              <div className="thesis-info">
-                <h1 className="thesis-title">{thesis.title}</h1>
-                <p><strong>Author:</strong> {thesis.author}</p>
-                <p><strong>Email:</strong> {thesis.email}</p>
-                <button
-                  className="view-button"
-                  onClick={e => {
-                    e.stopPropagation();
-                    window.open(`http://localhost:5000/${thesis.filePath}`, '_blank');
-                  }}
-                >
-                  View PDF
-                </button>
-                <button
-                  className="view-mrad-button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleMRAD(thesis._id);
-                  }}
-                >
-                  {expandedMRAD === thesis._id ? 'Hide MRAD' : 'View MRAD'}
-                </button>
+        <ThesisGrid
+          theses={filteredTheses}
+          selectMode={selectMode}
+          selectedIds={selectedIds}
+          toggleSelection={toggleSelection}
+          showMRAD={showMRAD}
+          showFullText={showFullText}
+        />
 
-                {expandedMRAD === thesis._id && (
-                  <div className="mrad-section">
-                    <p><strong>Methodology:</strong> {thesis.methodology || 'N/A'}</p>
-                    <p><strong>Results:</strong> {thesis.results || 'N/A'}</p>
-                    <p><strong>Analysis:</strong> {thesis.analysis || 'N/A'}</p>
-                    <p><strong>Discussion:</strong> {thesis.discussion || 'N/A'}</p>
-                  </div>
-                )}
-              </div>
+        {modalContent && (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-window" onClick={e => e.stopPropagation()}>
+              <button className="close-button" onClick={closeModal}>×</button>
+              {modalContent}
             </div>
-          ))}
-        </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

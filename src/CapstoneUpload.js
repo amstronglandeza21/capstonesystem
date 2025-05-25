@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
+import DashboardLayout from './components/DashboardLayout';
+import { useTheses } from './context/ThesisContext';
 import './CapstoneUpload.css';
 
 export default function CapstoneUpload() {
+  const { setTheses } = useTheses();
+
   const [formData, setFormData] = useState({
     title: '',
     abstract: '',
     author: '',
     email: '',
+    studentNumber: '',
+    groupMembers: '',
+    course: '',
+    year: '',
+    section: '',
+    adviser: '',
     file: null,
   });
 
-  const [message, setMessage] = useState(null); // { type: 'success'|'error', text: string }
+  const [message, setMessage] = useState(null);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -34,13 +44,21 @@ export default function CapstoneUpload() {
       });
 
       if (res.ok) {
+        const newThesis = await res.json();
+        setTheses(prev => [...prev, newThesis]); // add new thesis to context
+
         setMessage({ type: 'success', text: 'Capstone uploaded successfully!' });
-        // Optional: reset form here if you want
         setFormData({
           title: '',
           abstract: '',
           author: '',
           email: '',
+          studentNumber: '',
+          groupMembers: '',
+          course: '',
+          year: '',
+          section: '',
+          adviser: '',
           file: null,
         });
       } else {
@@ -53,24 +71,32 @@ export default function CapstoneUpload() {
   };
 
   return (
-    <div className="upload-container">
-      <h2>Upload Capstone</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="title" placeholder="Title" required onChange={handleChange} value={formData.title} /><br />
-        <textarea name="abstract" placeholder="Abstract" required onChange={handleChange} value={formData.abstract} /><br />
-        <input name="author" placeholder="Author" required onChange={handleChange} value={formData.author} /><br />
-        <input name="email" placeholder="Email" type="email" required onChange={handleChange} value={formData.email} /><br />
-        <input name="file" type="file" accept="application/pdf" required onChange={handleChange} /><br />
-        <button type="submit">Submit</button>
-      </form>
+    <DashboardLayout>
+      <div className="upload-container flat-theme">
+        <h2>Upload Capstone</h2>
+        <form onSubmit={handleSubmit}>
+          <input name="title" placeholder="Title" required onChange={handleChange} value={formData.title} />
+          <textarea name="abstract" placeholder="Abstract" required onChange={handleChange} value={formData.abstract} />
+          <input name="author" placeholder="Author" required onChange={handleChange} value={formData.author} />
+          <input name="email" placeholder="Email" type="email" required onChange={handleChange} value={formData.email} />
+          <input name="studentNumber" placeholder="Student Number" required onChange={handleChange} value={formData.studentNumber} />
+          <input name="groupMembers" placeholder="Group Members (comma-separated)" onChange={handleChange} value={formData.groupMembers} />
+          <input name="course" placeholder="Course" onChange={handleChange} value={formData.course} />
+          <input name="year" placeholder="Year" onChange={handleChange} value={formData.year} />
+          <input name="section" placeholder="Section" onChange={handleChange} value={formData.section} />
+          <input name="adviser" placeholder="Adviser" onChange={handleChange} value={formData.adviser} />
+          <input name="file" type="file" accept="application/pdf" required onChange={handleChange} />
 
-      {/* Message box */}
-      {message && (
-        <div className={`message-box ${message.type}`}>
-          {message.text}
-          <button className="close-btn" onClick={() => setMessage(null)}>×</button>
-        </div>
-      )}
-    </div>
+          <button type="submit">Submit</button>
+        </form>
+
+        {message && (
+          <div className={`message-box ${message.type}`}>
+            {message.text}
+            <button className="close-btn" onClick={() => setMessage(null)}>×</button>
+          </div>
+        )}
+      </div>
+    </DashboardLayout>
   );
 }

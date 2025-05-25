@@ -1,15 +1,15 @@
+// src/components/Sidebar.js
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './Sidebar.css';
-import { Menu, Home, Book } from 'lucide-react';
+import { Menu, Home, Book, Upload } from 'lucide-react';
 
 const Sidebar = () => {
-  // Initialize state from localStorage or default to false (not collapsed)
   const [collapsed, setCollapsed] = useState(() => {
     const saved = localStorage.getItem('sidebarCollapsed');
     return saved ? JSON.parse(saved) : false;
   });
 
-  // Save to localStorage when collapsed changes
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(collapsed));
   }, [collapsed]);
@@ -25,14 +25,20 @@ const Sidebar = () => {
       </button>
 
       <nav>
-        <button className="nav-item" onClick={() => alert('Home clicked')}>
+        <Link to="/" className="nav-item">
           <span className="nav-icon"><Home size={20} /></span>
           <span className="nav-label">Home</span>
-        </button>
-        <button className="nav-item" onClick={() => alert('Theses clicked')}>
+        </Link>
+
+        <Link to="/admin" className="nav-item">
           <span className="nav-icon"><Book size={20} /></span>
           <span className="nav-label">Theses</span>
-        </button>
+        </Link>
+
+        <Link to="/upload" className="nav-item">
+          <span className="nav-icon"><Upload size={20} /></span>
+          <span className="nav-label">Upload</span>
+        </Link>
       </nav>
 
       <div className="profile">

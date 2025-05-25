@@ -5,21 +5,17 @@ const { convert } = require('pdf-poppler');
 const path = require('path');
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-const Poppler = require('pdf-poppler');
-
 
 const router = express.Router();
 
-// Multer setup
+// Multer setup for storing uploaded files
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
     const { title, author } = req.body;
-    // Keep only lowercase letters, no spaces, no numbers, no symbols
     const baseName = `${title}${author}`
       .toLowerCase()
       .replace(/[^a-z]/g, '');
-
     const extension = path.extname(file.originalname).toLowerCase();
     cb(null, `${baseName}${extension}`);
   }
@@ -30,7 +26,19 @@ const upload = multer({ storage });
 // POST /api/upload
 router.post('/', upload.single('file'), async (req, res) => {
   try {
-    const { title, abstract, author, email } = req.body;
+    // Destructure all necessary fields from req.body
+    const {
+      title,
+      abstract,
+      author,
+      email,
+      studentNumber,
+      groupMembers,
+      course,
+      year,
+      section,
+      adviser,
+    } = req.body;
 
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
@@ -48,7 +56,7 @@ router.post('/', upload.single('file'), async (req, res) => {
       fs.mkdirSync(thumbnailDir, { recursive: true });
     }
 
-    // Convert first page of PDF to PNG
+    // Convert first page of PDF to PNG thumbnail
     await convert(pdfPath, {
       format: 'png',
       out_dir: thumbnailDir,
@@ -56,44 +64,44 @@ router.post('/', upload.single('file'), async (req, res) => {
       page: 1,
     });
 
-    // DEBUG: List files in thumbnail folder
-    const files = fs.readdirSync(thumbnailDir);
-    console.log('Files in thumbnail dir:', files);
-
-    // Rename the thumbnail file to remove '-01' suffix if exists
+    // Rename the thumbnail to remove '-01' suffix if present
     if (fs.existsSync(generatedFileWithSuffix)) {
       fs.renameSync(generatedFileWithSuffix, generatedFileNoSuffix);
-      console.log(`Renamed ${generatedFileWithSuffix} to ${generatedFileNoSuffix}`);
-    } else if (fs.existsSync(generatedFileNoSuffix)) {
-      console.log(`Thumbnail file already correctly named: ${generatedFileNoSuffix}`);
-    } else {
-      console.warn(`No thumbnail file found for ${fileNameNoExt}`);
     }
 
-    // Full-text extraction
+    // Extract full text from PDF
     const dataBuffer = fs.readFileSync(pdfPath);
     const pdfData = await pdfParse(dataBuffer);
     const fullText = pdfData.text;
 
-    // Simple MRAD section extractor
+    // Helper to extract IMRAD sections (case-insensitive)
     const extractSection = (label) => {
       const regex = new RegExp(`${label}\\s*\\n([\\s\\S]*?)(\\n[A-Z][a-zA-Z\\s]+\\n|$)`, 'i');
       const match = fullText.match(regex);
       return match ? match[1].trim() : '';
     };
 
+    // Check for duplicate thesis by title and author
     const existing = await Thesis.findOne({ title, author });
     if (existing) {
       return res.status(400).json({ error: 'Duplicate thesis for same author.' });
     }
 
+    // Create new Thesis document with all fields
     const thesis = new Thesis({
       title,
       abstract,
       author,
       email,
+      studentNumber,
+      groupMembers,
+      course,
+      year,
+      section,
+      adviser,
       filePath: req.file.path.replace(/\\/g, '/'),
       thumbnailPath: webThumbnailPath,
+      introduction: extractSection('Introduction'),
       textContent: fullText,
       methodology: extractSection('Methodology'),
       results: extractSection('Results'),
