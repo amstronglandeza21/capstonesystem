@@ -2,7 +2,15 @@
 import React from 'react';
 import ThesisCard from './ThesisCard';
 
-const ThesisGrid = ({ theses, selectMode, selectedIds, toggleSelection, showMRAD, showFullText }) => {
+const ThesisGrid = ({
+  theses,
+  selectMode,
+  selectedIds,
+  toggleSelection,
+  showMRAD,
+  showFullText,
+  showFullDetails,  // <-- add here
+}) => {
   return (
     <div className="thesis-grid">
       {theses.map(thesis => (
@@ -14,6 +22,7 @@ const ThesisGrid = ({ theses, selectMode, selectedIds, toggleSelection, showMRAD
           toggleSelection={toggleSelection}
           showMRAD={showMRAD}
           showFullText={showFullText}
+          showFullDetails={showFullDetails}  // <-- pass it here
         />
       ))}
     </div>

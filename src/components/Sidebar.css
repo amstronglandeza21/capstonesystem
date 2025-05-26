@@ -9,14 +9,12 @@
   transition: width 0.3s ease;
   margin: 1rem;
   overflow: hidden;
-  /* Removed border-radius and box-shadow */
 }
 
 .sidebar.collapsed {
   width: 1.2rem;
 }
 
-/* Toggle Button */
 .toggle-button {
   background: none;
   border: none;
@@ -29,7 +27,6 @@
   align-items: left;
 }
 
-/* Navigation */
 nav {
   display: flex;
   flex-direction: column;
@@ -39,41 +36,29 @@ nav {
 }
 
 .nav-item {
+  text-decoration: none;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
   padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 0.3s ease;
-  white-space: nowrap;
-  padding-left: 1rem; /* replaces margin-left */
   box-sizing: border-box;
   color: #111;
-  border: none;
-  background: none;
-  text-align: left;
   font: inherit;
 }
 
+
 .nav-item:hover {
   background-color: #f0f0f0;
+  
 }
 
 .sidebar.collapsed .nav-item {
   justify-content: center;
   padding: 0.5rem 0;
-  width: 100%;
-}
-
-.sidebar.collapsed .nav-item:hover {
-  background-color: #f0f0f0;
-  width: 100%;
-}
-
-.sidebar.collapsed .nav-icon {
-  margin-right: 0;
 }
 
 .sidebar.collapsed .nav-label {
@@ -81,42 +66,106 @@ nav {
   width: 0;
   pointer-events: none;
 }
+.nav-label {
+  transition: opacity 0.3s ease, width 0.3s ease;
+  white-space: nowrap;
+}
 
-/* Nav icons */
 .nav-icon {
-  margin-left: -0.3rem;
   width: 30px;
   height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-right: 10px;
+  position: relative;
   flex-shrink: 0;
 }
 
-/* Profile Section */
+/* 🛎️ Notification Icon */
+.notif-icon-container {
+  display: flex;
+  margin-left: -15px;
+  align-items: center;
+  justify-content: left;
+  padding: 0.75rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  position: relative;
+}
+
+.sidebar.collapsed .notif-icon-container {
+  padding: 0.75rem 0;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 10px;
+  line-height: 1;
+}
+.notif-panel {
+  position: absolute;
+  top: 150px;
+  margin-left: 30px;
+  width: 250px;
+  height: 350px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  overflow-y: auto;
+  color: black;
+  position: relative; /* ensure container is relative for absolute children */
+}
+
+.close-btn {
+  position: absolute; /* position relative to notif-panel */
+  top: 250px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: black;
+}
+
+.sidebar.collapsed .notif-badge {
+  right: 8px;
+}
+
+/* 👤 Profile */
 .profile {
   padding: 1rem;
   display: flex;
+  margin-left: -15px;
   align-items: center;
   justify-content: center;
+  padding: 0.75rem 1rem;
   border-top: 1px solid #eee;
   width: 100%;
   gap: 0.75rem;
-  transition: all 0.3s ease;
+  position: relative;
+  flex-shrink: 0;
+  transition: all 0.5s ease;
 }
 
 .profile img {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  flex-shrink: 0;
 }
 
 .profile .info {
   display: flex;
   flex-direction: column;
-  transition: opacity 0.3s ease, width 0.3s ease;
   overflow: hidden;
   white-space: nowrap;
 }
@@ -127,16 +176,8 @@ nav {
 
 .sidebar.collapsed .profile .info {
   opacity: 0;
-  width: 100%;
+  width: 0;
   pointer-events: none;
-}
-
-.info {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
 }
 
 .name {
@@ -144,7 +185,6 @@ nav {
   font-size: 0.95rem;
   color: #111;
   margin: 0;
-  line-height: 1.2;
 }
 
 .email {
@@ -152,24 +192,48 @@ nav {
   font-size: 9px;
   color: #666;
   margin: 0;
-  line-height: 1.2;
-}
-.nav-item {
-  text-decoration: none; /* Removes underline */
-  background: none;
-  border: none;
-  color: inherit;
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  gap: 10px;
-  cursor: pointer;
-  font: inherit;
 }
 
-.nav-item:focus,
-.nav-item:hover {
-  outline: none;
-  background-color: #f0f0f0; /* Optional: subtle hover effect */
-  text-decoration: none;
+/* 🧊 Notification Panel */
+.notif-panel {
+  position: fixed;
+  top: 100px;
+  width: 250px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  z-index: 2000;
+  overflow-y: auto;
+  color: black;
+}
+
+.shifted {
+  left: 220px;
+}
+
+.shifted-collapsed {
+  left: 60px;
+}
+
+.notif-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.notif-item {
+  margin: 5px 0;
+  padding: 6px;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  font-size: 0.9rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
 }

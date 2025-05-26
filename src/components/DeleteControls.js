@@ -2,9 +2,26 @@
 import React from 'react';
 import { Trash2 } from 'lucide-react';
 
-const DeleteControls = ({ selectMode, setSelectMode, selectedIds, setSelectedIds, applyDelete }) => {
+const DeleteControls = ({ 
+  selectMode, 
+  setSelectMode, 
+  selectedIds, 
+  setSelectedIds, 
+  applyDelete,
+  allIds
+}) => {
+  const allSelected = allIds.length > 0 && selectedIds.length === allIds.length;
+
+  const toggleSelectAll = () => {
+    if (allSelected) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(allIds);
+    }
+  };
+
   return (
-    <div className="admin-actions">
+    <div className="admin-actions" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
       {!selectMode ? (
         <button className="delete-icon-button" onClick={() => {
           setSelectMode(true);
@@ -14,6 +31,15 @@ const DeleteControls = ({ selectMode, setSelectMode, selectedIds, setSelectedIds
         </button>
       ) : (
         <>
+          <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <input 
+              type="checkbox" 
+              checked={allSelected} 
+              onChange={toggleSelectAll} 
+            />
+            Select All
+          </label>
+
           <button className="cancel-button" onClick={() => {
             setSelectMode(false);
             setSelectedIds([]);
@@ -32,5 +58,6 @@ const DeleteControls = ({ selectMode, setSelectMode, selectedIds, setSelectedIds
     </div>
   );
 };
+
 
 export default DeleteControls;

@@ -4,6 +4,7 @@ import SearchBar from './components/SearchBar';
 import DeleteControls from './components/DeleteControls';
 import ThesisGrid from './components/ThesisGrid';
 import { useTheses } from './context/ThesisContext';
+import FullDetailsModal from './components/FullDetailsModal';
 import './Admin.css';
 
 const Admin = () => {
@@ -12,12 +13,13 @@ const Admin = () => {
   const [selectedIds, setSelectedIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [modalContent, setModalContent] = useState(null);
+  const [fullDetailsThesis, setFullDetailsThesis] = useState(null);
 
-  const toggleSelection = (id) => {
-    setSelectedIds(prev =>
-      prev.includes(id) ? prev.filter(_id => _id !== id) : [...prev, id]
-    );
-  };
+const toggleSelection = (id) => {
+  setSelectedIds(prev =>
+    prev.includes(id) ? prev.filter(_id => _id !== id) : [...prev, id]
+  );
+};
 
   const applyDelete = async () => {
     if (!window.confirm('Are you sure you want to delete selected theses?')) return;
@@ -63,13 +65,21 @@ const Admin = () => {
     );
   };
 
-  const closeModal = () => setModalContent(null);
+  // New: show full details modal using your FullDetailsModal component
+  const showFullDetails = (thesis) => {
+    setFullDetailsThesis(thesis);
+  };
 
-const filteredTheses = theses.filter(t =>
-  (t.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-  (t.author || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-  (t.textContent || '').toLowerCase().includes(searchTerm.toLowerCase())
-);
+  const closeModal = () => {
+    setModalContent(null);
+    setFullDetailsThesis(null);
+  };
+
+  const filteredTheses = theses.filter(t =>
+    (t.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (t.author || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    (t.textContent || '').toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <DashboardLayout>
@@ -78,13 +88,15 @@ const filteredTheses = theses.filter(t =>
 
         <div className="admin-header">
           <h2>Uploaded Capstone</h2>
-          <DeleteControls
+                  <DeleteControls
             selectMode={selectMode}
             setSelectMode={setSelectMode}
             selectedIds={selectedIds}
             setSelectedIds={setSelectedIds}
             applyDelete={applyDelete}
+            allIds={filteredTheses.map(t => t._id)} // <-- this must be passed
           />
+
         </div>
 
         <p className="total-count">Total: {filteredTheses.length}</p>
@@ -96,13 +108,25 @@ const filteredTheses = theses.filter(t =>
           toggleSelection={toggleSelection}
           showMRAD={showMRAD}
           showFullText={showFullText}
+          showFullDetails={showFullDetails} // Pass the new prop
         />
 
+        {/* MRAD & Full Text Modal */}
         {modalContent && (
           <div className="modal-overlay" onClick={closeModal}>
             <div className="modal-window" onClick={e => e.stopPropagation()}>
               <button className="close-button" onClick={closeModal}>×</button>
               {modalContent}
+            </div>
+          </div>
+        )}
+
+        {/* Full Details Modal */}
+        {fullDetailsThesis && (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="modal-window" onClick={e => e.stopPropagation()}>
+              <button className="close-button" onClick={closeModal}>×</button>
+              <FullDetailsModal thesis={fullDetailsThesis} />
             </div>
           </div>
         )}

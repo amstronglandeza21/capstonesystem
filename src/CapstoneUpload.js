@@ -74,7 +74,14 @@ export default function CapstoneUpload() {
     <DashboardLayout>
       <div className="upload-container flat-theme">
         <h2>Upload Capstone</h2>
+
         <form onSubmit={handleSubmit}>
+           {message && (
+          <div className={`message-box ${message.type}`}>
+            {message.text}
+            <button className="close-btn" onClick={() => setMessage(null)}>×</button>
+          </div>
+        )}
           <input name="title" placeholder="Title" required onChange={handleChange} value={formData.title} />
           <textarea name="abstract" placeholder="Abstract" required onChange={handleChange} value={formData.abstract} />
           <input name="author" placeholder="Author" required onChange={handleChange} value={formData.author} />
@@ -89,13 +96,6 @@ export default function CapstoneUpload() {
 
           <button type="submit">Submit</button>
         </form>
-
-        {message && (
-          <div className={`message-box ${message.type}`}>
-            {message.text}
-            <button className="close-btn" onClick={() => setMessage(null)}>×</button>
-          </div>
-        )}
       </div>
     </DashboardLayout>
   );

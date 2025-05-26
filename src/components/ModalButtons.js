@@ -1,5 +1,6 @@
 // src/components/ModalButtons.js
 import React from 'react';
+
 import './ModalButtons.css';
 
 const ModalButtons = ({ onShowMRAD, onShowFullText }) => {

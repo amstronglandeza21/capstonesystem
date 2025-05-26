@@ -1,4 +1,3 @@
-// server/models/Thesis.js
 const mongoose = require('mongoose');
 
 const ThesisSchema = new mongoose.Schema({
@@ -20,6 +19,7 @@ const ThesisSchema = new mongoose.Schema({
   discussion: String,
   filePath: String,
   thumbnailPath: String,
+  uploadDate: { type: Date, default: Date.now }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Thesis', ThesisSchema);

@@ -1,10 +1,14 @@
 /* src/CapstoneUpload.css */
 .upload-container {
+  margin-top: 2rem;
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
 }
-
+.upload-container h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
 .flat-theme {
   background: white;
   color: black;
@@ -45,8 +49,12 @@
 
 .message-box {
   margin-top: 1rem;
-  padding: 10px;
+  padding: 15px;
   border: 1px solid;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .message-box.success {
@@ -60,9 +68,14 @@
 }
 
 .close-btn {
-  float: right;
-  background: none;
-  border: none;
-  font-size: 16px;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  padding: 2px 5px;
+  font-size: 10px;
   cursor: pointer;
+  background: transparent;
+  border: none;
+  color: inherit;
 }

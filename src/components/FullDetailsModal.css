@@ -1,0 +1,61 @@
+/* FullDetailsModal.css */
+
+.full-details-modal {
+  max-width: 900px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 24px 32px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.full-details-modal h2 {
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+}
+
+.full-details-modal section {
+  margin-bottom: 16px;
+}
+
+.full-details-modal section:last-child {
+  margin-bottom: 0;
+}
+
+.full-details-modal strong {
+  display: inline-block;
+  width: 140px;
+  font-weight: 600;
+  color: #222;
+}
+
+.full-details-modal p {
+  display: inline-block;
+  margin: 0;                                                               
+  line-height: 1.6;
+  white-space: pre-wrap; /* Keep line breaks */
+}
+
+.full-details-modal .file-link {
+  display: block;
+  margin-top: 12px;
+  color:rgb(124, 129, 134);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.full-details-modal .file-link:hover {
+  text-decoration: underline;
+}
+
+/* Scrollbar styling for overflow */
+.full-details-modal::-webkit-scrollbar {
+  width: 8px;
+}
+
+.full-details-modal::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.15);
+  border-radius: 4px;
+}

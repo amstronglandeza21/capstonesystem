@@ -2,7 +2,15 @@
 import React from 'react';
 import ModalButtons from './ModalButtons';
 
-const ThesisCard = ({ thesis, selectMode, isSelected, toggleSelection, showMRAD, showFullText }) => {
+const ThesisCard = ({
+  thesis,
+  selectMode,
+  isSelected,
+  toggleSelection,
+  showMRAD,
+  showFullText,
+  showFullDetails,  // <-- add this here
+}) => {
   return (
     <div
       className={`thesis-card ${selectMode ? 'select-mode' : ''} ${isSelected ? 'selected' : ''}`}
@@ -31,6 +39,7 @@ const ThesisCard = ({ thesis, selectMode, isSelected, toggleSelection, showMRAD,
         <h1 className="thesis-title">{thesis.title}</h1>
         <p><strong>Author:</strong> {thesis.author}</p>
         <p><strong>Email:</strong> {thesis.email}</p>
+
         <button
           className="view-button"
           onClick={e => {
@@ -40,10 +49,22 @@ const ThesisCard = ({ thesis, selectMode, isSelected, toggleSelection, showMRAD,
         >
           View PDF
         </button>
+
         <ModalButtons
           onShowMRAD={() => showMRAD(thesis)}
           onShowFullText={() => showFullText(thesis)}
         />
+
+        {/* New Full Details Button */}
+        <button
+          className="view-button"
+          onClick={e => {
+            e.stopPropagation();
+            showFullDetails(thesis);
+          }}
+        >
+          Full Details
+        </button>
       </div>
     </div>
   );
